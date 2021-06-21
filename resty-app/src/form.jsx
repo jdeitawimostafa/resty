@@ -6,10 +6,6 @@ export default class Form extends React.Component {
         this.state = {
             method:'',
             output:'',
-        //     tempRender:{
-        //         method:'',
-        //         output:'',
-        //   }
     }
 }
 
@@ -26,10 +22,20 @@ export default class Form extends React.Component {
         this.setState({method:radioBtn});
       }
   
-      handleClick = e => {
+      handleClick = async e => {
           e.preventDefault();
-          console.log('you clicked the go button!');
-        //   this.setState({tempRender:})
+          let raw = await fetch(this.state.output);
+          const Response =await raw.json();
+          console.log('ssssssssssssssss',raw);
+          console.log('tttttttttttttttttttttttttttttt',Response);
+          let headers ={};
+          raw.headers.forEach((val,idx)=>{
+            headers[idx]=val;
+          // console.log(headers);
+          return headers;
+          })
+          this.props.handler({headers,Response});
+          console.log('38',Response);
       }
 
       render(){
@@ -43,7 +49,7 @@ export default class Form extends React.Component {
                 <button onClick={this.handleClick} >GO!</button>
                 </div>
                 <div className="radioBtns">
-                <input onChange={this.handleRadio} name="method" type="radio" value="GET"/>GET
+                <input checked="checked" onChange={this.handleRadio} name="method" type="radio" value="GET"/>GET
                 <input onChange={this.handleRadio} name="method" type="radio" value="POST"/>POST
                 <input onChange={this.handleRadio} name="method" type="radio" value="PUT"/>PUT
                 <input onChange={this.handleRadio} name="method" type="radio" value="DELETE"/>DELETE
