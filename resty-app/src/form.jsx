@@ -1,4 +1,5 @@
 import React from 'react';
+const superagent = require('superagent');
 
 export default class Form extends React.Component {
     constructor(props){
@@ -6,8 +7,11 @@ export default class Form extends React.Component {
         this.state = {
             method:'',
             output:'',
+            body:'',
     }
 }
+
+    
 
     handleInput = e => {
         let input = e.target.value;
@@ -20,22 +24,23 @@ export default class Form extends React.Component {
         let radioBtn = e.target.value;
         console.log('radio',radioBtn)
         this.setState({method:radioBtn});
+       
       }
   
       handleClick = async e => {
           e.preventDefault();
-          let raw = await fetch(this.state.output);
-          const Response =await raw.json();
-          console.log('ssssssssssssssss',raw);
-          console.log('tttttttttttttttttttttttttttttt',Response);
-          let headers ={};
-          raw.headers.forEach((val,idx)=>{
-            headers[idx]=val;
-          // console.log(headers);
-          return headers;
-          })
-          this.props.handler({headers,Response});
-          console.log('38',Response);
+          let Response = await superagent[this.state.method](this.state.output).send(this.state.body).set('Content-Type','application/json');
+          const results = Response.body;
+          console.log('response from line 34',Response);
+          let headers = Response.headers;
+          this.props.handler({headers,results});
+          console.log('38',headers);
+          console.log('results from res.body',results);
+
+           const {method,output} = this.state;
+           localStorage.setItem('method',method);
+           localStorage.setItem('output',output);
+         
       }
 
       render(){
@@ -49,16 +54,19 @@ export default class Form extends React.Component {
                 <button onClick={this.handleClick} >GO!</button>
                 </div>
                 <div className="radioBtns">
-                <input checked="checked" onChange={this.handleRadio} name="method" type="radio" value="GET"/>GET
-                <input onChange={this.handleRadio} name="method" type="radio" value="POST"/>POST
-                <input onChange={this.handleRadio} name="method" type="radio" value="PUT"/>PUT
-                <input onChange={this.handleRadio} name="method" type="radio" value="DELETE"/>DELETE
+                <input checked="checked" onChange={this.handleRadio} name="method" type="radio" value="get"/>GET
+                <input onChange={this.handleRadio} name="method" type="radio" value="post"/>POST
+                <input onChange={this.handleRadio} name="method" type="radio" value="put"/>PUT
+                <input onChange={this.handleRadio} name="method" type="radio" value="delete"/>DELETE
                 </div>
                 <section id="temp">
                     <h3>{this.state.method}</h3>
                     <h3>{this.state.output}</h3>
                 </section>
+
+                <textarea onChange={this.handleText} name="body" id="body" cols="100" rows="4"></textarea>
             </div>
         );
         }
 }
+
