@@ -3,7 +3,10 @@ import React from 'react';
 import Header from './header';
 import Form from './form';
 import Results from './results';
+import { Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router} from 'react-router-dom';
 import History from './history';
+import Help from './help';
 import Footer from './footer';
 
 
@@ -32,13 +35,23 @@ class App extends React.Component {
   render(){
     console.log('inside render',this.state);
   return (
+    
+      <Router>
+
     <React.Fragment>
       <Header/>
+        <Switch>
+      <Route exact path="/">
+
       <Form handler={this.handleForm} />
       <Results headers={this.state.headers} results={this.state.results}/>
-      <History/>
+      </Route>
+            <Route exact path="/history" component={History} />
+            <Route  exact path="/help" component={Help} />
+        </Switch>
       <Footer/>
     </React.Fragment>
+      </Router>
   );
 }
 }
