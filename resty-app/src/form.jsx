@@ -8,6 +8,7 @@ export default class Form extends React.Component {
             method:'',
             output:'',
             body:'',
+            isFetching:false,
     }
 }
 
@@ -29,6 +30,8 @@ export default class Form extends React.Component {
   
       handleClick = async e => {
           e.preventDefault();
+          this.setState({isFetching:true});
+          try{
           let Response = await superagent[this.state.method](this.state.output).send(this.state.body).set('Content-Type','application/json');
           const results = Response.body;
           console.log('response from line 34',Response);
@@ -37,10 +40,36 @@ export default class Form extends React.Component {
           console.log('38',headers);
           console.log('results from res.body',results);
 
-           const {method,output} = this.state;
-           localStorage.setItem('method',method);
-           localStorage.setItem('output',output);
+          console.log('line 40 from form.jsx',this.state.body);
+
+        //    const {method,output} = this.state;
+        //    localStorage.setItem('method',method);
+        //    localStorage.setItem('output',output);
+        const historyArr = JSON.parse(localStorage.getItem('history'));
+        const { output, body,method } = this.state;
+        const obj = {output, body,method};
+        if(!historyArr){
+          localStorage.setItem('history',JSON.stringify([obj]));
+        }
+       else {
+         let sotredData = historyArr.find(item => {
+             
+           return ((item.output === output) && (item.body === body) && (item.method === method));
+         });
+         if(!sotredData){ 
+           historyArr.push(obj);
+           localStorage.setItem('history',JSON.stringify(historyArr));
+         }
+       }
+       } catch(error){
+         console.error(error)
+       }
          
+      }
+
+      handleText = e => {
+          let bodyText = e.target.value;
+          this.setState({body:bodyText});
       }
 
       render(){
