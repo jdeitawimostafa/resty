@@ -22,7 +22,7 @@ class App extends React.Component {
   handleForm = (headers,results) => {
     this.setState({headers:headers,results:headers.results});
     console.log('afte setstate',this.state);
-    console.log('from app',this.state.results);
+    console.log('from app results',this.state.results);
     console.log('from app',this.state.headers);
   }
 
